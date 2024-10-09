@@ -16,6 +16,12 @@ app.use(
   })
 );
 
+// socketio
+const http = require("http");
+const server = http.createServer(app);
+const socket = require("./config/socket");
+const io = socket.init(server);
+
 //config
 const db = require("./config/db");
 db.connect();
@@ -40,7 +46,7 @@ app.use("/api/v1/committee", committeeRoutes);
 app.use("/api/v1/expense", dailyExpense)
 app.use("/api/v1/rating", ratingRoutes);
 
-
+socket.connect(io);
 
 //adding defaut route
 app.get("/", (req, res) => {
@@ -53,4 +59,7 @@ app.get("/", (req, res) => {
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
+});
+server.listen(5000, () => {
+  console.log(`Socket server is running on port 5000`);
 });
