@@ -18,9 +18,9 @@ app.use(
 
 // socketio
 const http = require("http");
-const server = http.createServer(app);
+const socketserver = http.createServer(app);
 const socket = require("./config/socket");
-const io = socket.init(server);
+const io = socket.init(socketserver);
 
 //config
 const db = require("./config/db");
@@ -60,6 +60,8 @@ const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
 });
-server.listen(5000, () => {
-  console.log(`Socket server is running on port 5000`);
+
+const socketport = process.env.SOCKET_SERVER_PORT || 5000;
+socketserver.listen(socketport, () => {
+  console.log(`Socket server is running on port ${socketport}`);
 });

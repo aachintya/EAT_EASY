@@ -1,14 +1,13 @@
 const socketIo = require('socket.io');
 
 const init = (server) => {
-  const { FRONTEND_LINK } = process.env;
+  const FRONTEND_LINK = process.env.FRONTEND_LINK || 'http://localhost:3000';
   let io = socketIo(server, {
     cors: {
       origin: FRONTEND_LINK,
       methods: ['GET', 'POST'],
     },
   });
-  console.log(FRONTEND_LINK);
   return io;
 };
 
