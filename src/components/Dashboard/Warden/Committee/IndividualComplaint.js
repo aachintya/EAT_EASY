@@ -7,6 +7,12 @@ import {
   addCommentToComplaint,
   getCommentsByComplaintId,
 } from "../../../../services/operations/ComplaintAPI";
+import {
+  awaitUpvotes,
+  awaitDownvotes,
+  awaitComments,
+  emitNewComment,
+} from "../../../../services/socket";
 import { useSelect } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import { formattedDate } from "../../../../utils/dateFormatter";
@@ -20,12 +26,18 @@ const IndividualComplaint = () => {
   const { token } = useSelector((state) => state.auth);
   const [showComments, setShowComments] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
+  
+  const [upvotes, setUpvotes] = useState(0);
+  const [downvotes, setDownvotes] = useState(0);
+
   useEffect(() => {
     const fetchComplaint = async () => {
       try {
         const response = await fetchComplaintById(id, token);
         if (response) {
           setComplaint(response);
+          setUpvotes(response.upVotedBy.length);
+          setDownvotes(response.downVotedBy.length);
         } else {
           console.error("Error fetching complaint");
         }
@@ -35,6 +47,27 @@ const IndividualComplaint = () => {
     };
 
     fetchComplaint();
+
+    // await upvotes and downvotes
+    awaitUpvotes((data) => {
+      if (data.complaintId === id) {
+        setUpvotes(data.upVotedBy.length);
+        setDownvotes(data.downVotedBy.length);
+      }
+    });
+
+    awaitDownvotes((data) => {
+      if (data.complaintId === id) {
+        setUpvotes(data.upVotedBy.length);
+        setDownvotes(data.downVotedBy.length);
+      }
+    });
+
+    // await new comments
+    awaitComments((newComment) => {
+      if (newComment.complaintId !== id) return;
+      setComments((prevComments) => [newComment, ...prevComments]);
+    });
   }, [id, token]);
   console.log("complaint", complaint);
   const handleAddComment = async (e) => {
@@ -48,6 +81,9 @@ const IndividualComplaint = () => {
         console.log("response in adding comment", response);
         //setComplaint(response);
         setComment(""); // Clear the comment input
+
+        // emit event to update comments in real-time
+        emitNewComment(response);
       } else {
         console.error("Error adding comment");
       }
@@ -128,12 +164,12 @@ const IndividualComplaint = () => {
                 <label className="mt-2 text-yellow-200">UpVote: </label>
 
                 <h1 className="mr-6 mt-2.5 text-white">
-                  {complaint?.upVotedBy?.length}
+                  {upvotes}
                 </h1>
                 <label className="mt-2 text-yellow-200 ">DownVote: </label>
 
                 <h1 className="mr-6 mt-2.5 text-gray-100">
-                  {complaint?.downVotedBy?.length}
+                  {downvotes}
                 </h1>
               </div>
               <div className="flex flex-row gap-2">
