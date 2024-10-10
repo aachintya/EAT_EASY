@@ -1,24 +1,150 @@
 import React from "react";
+import Swal from 'sweetalert2';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './contactUs.css'
 const ContactForm = () => {
-  return (
-    <>
-      <div className="p-5">
-        <div className="   mt-24 border border-pink-600 text-white rounded-xl p-7 lg:p-14 flex gap-3 flex-col">
-          <h1 className="text-4xl leading-10 font-semibold text-richblack-5">
-            Feel Free To Reach Out Us.
-          </h1>
-          <p className="">
-            Tell us more about yourself and what you're got in mind.
-            <p className="bg-blue-100 text-yellow-950 w-fit">
-              Contact Us : sundram.smn@gmail.com
-            </p>
-          </p>
+  const [formData, setFormData] = useState({
+    email: '',
+    name: '',
+    message: ''
+  });
 
-          <div className="mt-7">{/* <ContactUsForm /> */}</div>
+  const [emailError, setEmailError] = useState('');
+  const [messageError, setMessageError] = useState('');
+
+  async function Backendhit() {
+    try{
+      let response = await fetch("/contactUs",{
+      method:"POST",
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body:JSON.stringify(formData)
+      });
+      console.log("object created");
+      let result = await response.json();
+      // alert("Message was submitted successfully");
+      Swal.fire({
+        icon: 'success',
+        title: 'Form Submitted',
+        text: 'Thank you for your message!',
+        confirmButtonText: 'OK'
+      });
+      
+  }
+  catch{
+      console.log("some Error Has occured while creation")
+      // alert(" Oops!!! Some Error occured, RETRY Please !!");
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please fix the errors and try again!'
+      });
+
+  }   
+  setFormData({
+    email: '',
+    name: '',
+    message: ''
+  });
+  setEmailError('');
+  setMessageError('');         
+    
+}
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validateMessage = (message) => {
+    return message.length >= 10;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    let isValid = true;
+
+    // Validate Email
+    if (!validateEmail(formData.email)) {
+      setEmailError('Please enter a valid email address.');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    // Validate Message Length
+    if (!validateMessage(formData.message)) {
+      setMessageError('Message too short. It should be at least 10 characters.');
+      isValid = false;
+    } else {
+      setMessageError('');
+    }
+
+    if (isValid) {
+      console.log('Form submitted: ', formData);
+      Backendhit();
+    }
+  };
+
+  return (
+    <div className="contact-container">
+      <h2 className="text-center">Contact Us</h2>
+      <form onSubmit={handleSubmit} className="contact-form">
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">Email address</label>
+          <input 
+            type="email" 
+            className={`form-control ${emailError ? 'is-invalid' : ''}`} 
+            id="email" 
+            name="email" 
+            value={formData.email} 
+            onChange={handleChange} 
+            placeholder="name@example.com" 
+            required 
+          />
+          {emailError && <div className="invalid-feedback">{emailError}</div>}
         </div>
-      </div>
-    </>
+
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Your Name</label>
+          <input 
+            type="text" 
+            className="form-control" 
+            id="name" 
+            name="name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            placeholder="Your Name" 
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="message" className="form-label">Message</label>
+          <textarea 
+            className={`form-control ${messageError ? 'is-invalid' : ''}`} 
+            id="message" 
+            name="message" 
+            value={formData.message} 
+            onChange={handleChange} 
+            rows="4" 
+            placeholder="Any suggestion/complaint/query" 
+            required 
+          />
+          {messageError && <div className="invalid-feedback">{messageError}</div>}
+        </div>
+
+        <button type="submit" className="btn btn-primary w-100">Submit</button>
+      </form>
+    </div>
   );
+  
 };
 
 export default ContactForm;
