@@ -1,4 +1,5 @@
 const socketIo = require('socket.io');
+const { upvoteComment, downvoteComment } = require('../utils/commentUtils');
 
 const init = (server) => {
   const FRONTEND_LINK = process.env.FRONTEND_LINK || 'http://localhost:3000';
@@ -30,6 +31,17 @@ const connect = (io) => {
       io.emit('newComment', data);
     });
 
+    // Handle comment upvoted event
+    socket.on('upvoteComment', (data) => {
+      io.emit('upvoteComment', data);
+    });
+
+    // Handle comment downvoted event
+    socket.on('downvoteComment', (data) => {
+      io.emit('downvoteComment', data);
+    });
+
+    // Handle client disconnection
     socket.on('disconnect', () => {
       console.log('Client disconnected');
     });

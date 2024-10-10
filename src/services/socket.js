@@ -22,6 +22,14 @@ export const awaitComments = (callback) => {
   socket.on('newComment', callback);
 };
 
+export const awaitCommentUpvotes = (callback) => {
+  socket.on('upvoteComment', callback);
+}
+
+export const awaitCommentDownvotes = (callback) => {
+  socket.on('downvoteComment', callback);
+}
+
 export const emitUpvote = (data) => {
   socket.emit('upvote', data);
 };
@@ -33,3 +41,11 @@ export const emitDownvote = (data) => {
 export const emitNewComment = (data) => {
   socket.emit('newComment', data);
 };
+
+export const emitUpvoteComment = (data) => {
+  socket.emit('upvoteComment', data);
+}
+
+export const emitDownvoteComment = (data) => {
+  socket.emit('downvoteComment', data);
+}

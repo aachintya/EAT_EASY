@@ -8,15 +8,24 @@ import {
   getCommentsByComplaintId,
 } from "../../../../services/operations/ComplaintAPI";
 import {
+  likeComment,
+  dislikeComment,
+} from "../../../../services/operations/CommentAPI";
+import {
   awaitUpvotes,
   awaitDownvotes,
   awaitComments,
+  awaitCommentUpvotes,
+  awaitCommentDownvotes,
   emitNewComment,
+  emitUpvoteComment,
+  emitDownvoteComment,
 } from "../../../../services/socket";
 import { useSelect } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import { formattedDate } from "../../../../utils/dateFormatter";
 import { isRejected } from "@reduxjs/toolkit";
+import { BiSolidUpvote, BiSolidDownvote } from "react-icons/bi";
 
 const IndividualComplaint = () => {
   const { id } = useParams();
@@ -67,6 +76,34 @@ const IndividualComplaint = () => {
     awaitComments((newComment) => {
       if (newComment.complaintId !== id) return;
       setComments((prevComments) => [newComment, ...prevComments]);
+    });
+
+    // await comment upvotes and downvotes
+    awaitCommentUpvotes((data) => {
+      console.log("!!!!!!! Comment upvote recieved")
+      setComments((comments) => comments.map((comment) => {
+        if (comment._id === data._id) {
+          return {
+            ...comment,
+            upVotedBy: data.upVotedBy,
+            downVotedBy: data.downVotedBy,
+          };
+        }
+        return comment;
+      }));
+    });
+
+    awaitCommentDownvotes((data) => {
+      setComments((comments) => comments.map((comment) => {
+        if (comment._id === data._id) {
+          return {
+            ...comment,
+            upVotedBy: data.upVotedBy,
+            downVotedBy: data.downVotedBy,
+          };
+        }
+        return comment;
+      }));
     });
   }, [id, token]);
   console.log("complaint", complaint);
@@ -127,6 +164,33 @@ const IndividualComplaint = () => {
     }
   };
   console.log("COMMENTT", comment);
+
+  const handleCommentUpvote = async (e, commentId) => {
+    e.preventDefault();
+    console.log("!!!!!!!!!! HANDLING COMMENT UPVOTE")
+    try {
+      const response = await likeComment(commentId, token);
+      console.log("!!!!!!!!!!" , response);
+      if (response.success) {
+        console.log("!!! EMITTING UPVOTE")
+        emitUpvoteComment(response.updatedComment);
+      }
+    } catch (error) {
+      console.error("Error upvoting comment:", error);
+    }
+  };
+
+  const handleCommentDownvote = async (e, commentId) => {
+    e.preventDefault();
+    try {
+      const response = await dislikeComment(commentId, token);
+      if (response.success) {
+        emitDownvoteComment(response.updatedComment);
+      }
+    } catch (error) {
+      console.error("Error downvoting comment:", error);
+    }
+  };
 
   return (
     <>
@@ -249,19 +313,29 @@ const IndividualComplaint = () => {
                 <ul className="form-style text-white">
                   {comments.map((comment) => (
                     <div key={comment._id}>
-                      {/* <p>
-                        {comment?.userName}: {comment.text}{" "}
-                      </p> */}
-
-                      <div class="mx-auto my-8 flex max-w-screen-sm rounded-xl border border-gray-100 p-4 text-left text-white-600 shadow-lg sm:p-8">
-                        <div class="w-full text-left">
-                          <div class="mb-2 flex flex-col justify-between text-white-600 sm:flex-row">
-                            <h3 class="font-medium">{comment?.userName}</h3>
-                            <time class="text-xs" datetime="2022-11-13T20:00Z">
+                      <div className="mx-auto my-8 flex max-w-screen-sm rounded-xl border border-gray-100 p-4 text-left text-white-600 shadow-lg sm:p-8">
+                        <div className="w-full text-left">
+                          <div className="mb-2 flex flex-col justify-between text-white-600 sm:flex-row">
+                            <h3 className="font-medium">{comment?.userName}</h3>
+                            <time className="text-xs" dateTime={comment.createdAt}>
                               {formattedDate(comment.createdAt)}
                             </time>
                           </div>
-                          <p class="text-sm">{comment.text} </p>
+                          <p className="text-sm">{comment.text}</p>
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              className="flex items-center text-yellow-200"
+                              onClick={(e) => handleCommentUpvote(e, comment._id)}
+                            >
+                              <BiSolidUpvote /> {comment.upVotedBy.length}
+                            </button>
+                            <button
+                              className="flex items-center text-yellow-200"
+                              onClick={(e) => handleCommentDownvote(e, comment._id)}
+                            >
+                              <BiSolidDownvote /> {comment.downVotedBy.length}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

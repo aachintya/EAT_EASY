@@ -73,3 +73,69 @@ exports.getComment = async (req, res) => {
     });
   }
 };
+
+// like comment
+exports.likeComment = async (req, res) => {
+  try {
+    console.log("Inside like comment controller");
+    const { commentId } = req.body;
+    const userEmail = req.user.email;
+
+    console.log(commentId, userEmail);
+    const updatedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      {
+        $addToSet: { upVotedBy: userEmail },
+        $pull: { downVotedBy: userEmail },
+      },
+      { new: true }
+    );
+
+    console.log("!!!!!!!!!", updatedComment);
+    res.status(200).json({
+      success: true,
+      message: "Comment has been liked!",
+      updatedComment,
+    });
+  } catch (error) {
+    console.log("error in like comment: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error,
+    });
+  }
+};
+
+// dislike comment
+exports.dislikeComment = async (req, res) => {
+  try {
+    console.log("Inside dislike comment controller");
+    const { commentId } = req.body;
+    const userEmail = req.user.email;
+
+    console.log(commentId, userEmail);
+    const updatedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      {
+        $addToSet: { downVotedBy: userEmail },
+        $pull: { upVotedBy: userEmail },
+      },
+      { new: true }
+    );
+
+    console.log(updatedComment);
+    res.status(200).json({
+      success: true,
+      message: "Comment has been disliked!",
+      updatedComment,
+    });
+  } catch (error) {
+    console.log("error in dislike comment: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error,
+    });
+  }
+};
