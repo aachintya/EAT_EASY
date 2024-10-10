@@ -23,6 +23,16 @@ const commentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  upVotedBy: [
+    {
+      type: String,
+    }
+  ],
+  downVotedBy: [
+    {
+      type: String,
+    }
+  ],
   // Add more fields as needed
 });
 

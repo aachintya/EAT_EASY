@@ -34,6 +34,8 @@ const {
 const {
   createComment,
   getComment,
+  likeComment,
+  dislikeComment,
 } = require("../controllers/commentController");
 
 router.post("/createComplaint", auth, isStudent, createComplaint);
@@ -55,5 +57,7 @@ router.get("/:complaintId/getComment", auth, getComment);
 
 router.post("/:complaintId/createComment", auth, createComment);
 router.get("/:complaintId/getComment", auth, getComment);
+router.put("/updateCommentUpvote", auth, isStudent, likeComment);
+router.put("/updateCommentDownvote", auth, isStudent, dislikeComment);
 
 module.exports = router;

@@ -9,6 +9,12 @@ import {
   dislikeComplaint,
   resolveComplaint,
 } from "../../../services/operations/ComplaintAPI";
+import {
+  awaitUpvotes,
+  awaitDownvotes,
+  emitUpvote,
+  emitDownvote,
+} from "../../../services/socket";
 import { ACCOUNT_TYPE } from "../../../utils/constants";
 import { formattedDate } from "../../../utils/dateFormatter";
 import { FaCheck } from "react-icons/fa";
@@ -24,6 +30,36 @@ const ComplaintTable2 = ({ complaints, setComplaint }) => {
   const [loading, setLoading] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(null);
   const TRUNCATE_LENGTH = 30;
+
+  useEffect(() => {
+    awaitUpvotes((data) => {
+      setComplaint((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === data.complaintId
+            ? 
+            { ...complaint, 
+              upVotedBy: data.upVotedBy, 
+              downVotedBy: data.downVotedBy 
+            }
+            : complaint
+        )
+      );
+    });
+
+    awaitDownvotes((data) => {
+      setComplaint((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === data.complaintId
+            ? 
+            { ...complaint, 
+              upVotedBy: data.upVotedBy, 
+              downVotedBy: data.downVotedBy 
+            }
+            : complaint
+        )
+      );
+    });
+  }, [setComplaint]);
 
   const onUpvote = async (complaintId) => {
     console.log("complaint ID in UP", complaintId);
@@ -41,6 +77,9 @@ const ComplaintTable2 = ({ complaints, setComplaint }) => {
               : complaint
           )
         );
+        // emit event to update the count in real-time
+        const { upVotedBy, downVotedBy } = updatedComplaint;
+        emitUpvote({complaintId, upVotedBy, downVotedBy});
 
         // toast.success("Complaint Liked");
       } else {
@@ -72,6 +111,9 @@ const ComplaintTable2 = ({ complaints, setComplaint }) => {
                 : complaint
             )
           );
+          // emit event to update the count in real-time
+          const { upVotedBy, downVotedBy } = updatedComplaint;
+          emitDownvote({complaintId, upVotedBy, downVotedBy});
         }
       }
     } catch (error) {
