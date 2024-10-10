@@ -1,70 +1,77 @@
-/* Full page background and form styling */
+/* Container styling */
 .contact-container {
   display: flex;
   padding: 20px;
   flex-direction: column;
-  justify-items: center;
-  flex-wrap: wrap;
-  align-content: center;
-  position: relative;
-  margin: auto;
   justify-content: center;
+  align-items: center;
   height: 100vh;
-
+  background-color: #ffffff;
 }
 
-/* Form width and positioning */
+/* Form styling */
 .contact-form {
-background-color:  #F4F6FF; /* White background for form to contrast light page */
-padding: 30px;
-border-radius: 20px;
-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Slight shadow for elegance */
-/* width: 80vh; */
-max-width: 800px;
+  background-color:  #F4F6FF; /* White background for form to contrast light page */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Slight shadow for elegance */
+  /* width: 80vh; */
+  max-width: 800px;
 }
 
-/* Font colors and alignment */
+/* Label styles */
 .form-label {
-color: black;
-font-weight: bold;
+  color: black;
+  font-weight: bold;
 }
 
-input, textarea {
-background-color: #ffffff; /* White background for input fields */
-color: black;
-border: 1px solid #ccc;
-border-radius: 10px;
+.required {
+  color: red;
 }
 
-input::placeholder, textarea::placeholder {
-color: black; /* Black placeholder text for better visibility */
+/* Specific input field styling */
+.email-field input,
+.name-field input,
+.message-field textarea {
+  background-color: #ffffff; /* White background for input fields */
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 10px;
 }
 
-input:focus, textarea:focus {
-border-color: #007bff; /* Subtle blue focus effect */
-background-color: #f9f9f9;
-color: black;
+.email-field input::placeholder,
+.name-field input::placeholder,
+.message-field textarea::placeholder {
+  color: black; /* Black placeholder text */
+}
+
+.email-field input:focus,
+.name-field input:focus,
+.message-field textarea:focus {
+  border-color: #007bff;
+  background-color: #f9f9f9;
+  color: black;
 }
 
 /* Button styling */
-.btn-primary {
-background-color: #28a745;
-border: none;
-width: 100%;
-color: white; /* White text for better contrast */
-font-weight: bold;
-border-radius: 5px;
-transition: transform 0.3s;
+.btn-submit2 {
+  background-color: #124ee4; /* Blue button */
+  border: none;
+  width: 100%;
+  color: white; /* White text */
+  font-weight: bold;
+  border-radius: 5px;
+  transition: transform 0.3s;
 }
 
-.btn-primary:hover {
-transform: scale(1.05);
-background-color: #218838; /* Darker green on hover */
+.btn-submit2:hover {
+  transform: scale(1.05);
+  background-color: #0b3ba3; /* Darker blue on hover */
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-.contact-form {
-  width: 90%;
-}
+  .contact-form {
+    width: 90%;
+  }
 }

@@ -94,59 +94,62 @@ const ContactForm = () => {
   };
 
   return (
+    <>
     <div className="contact-container">
-  <h2 className="text-center">Contact Us</h2>
-  <form onSubmit={handleSubmit} className="contact-form">
-    <div className="mb-3">
-      <label htmlFor="email" className="form-label">
-        Email address <span style={{ color: 'red' }}>*</span>
-      </label>
-      <input 
-        type="email" 
-        className={`form-control ${emailError ? 'is-invalid' : ''}`} 
-        id="email" 
-        name="email" 
-        value={formData.email} 
-        onChange={handleChange} 
-        placeholder="name@example.com" 
-        required 
-      />
-      {emailError && <div className="invalid-feedback">{emailError}</div>}
-    </div>
+      
+    <h2 className="text-center">Contact Us</h2>
+    <form onSubmit={handleSubmit} className="contact-form">
+      <div className="form-group mb-3 email-field">
+        <label htmlFor="email" className="form-label">
+          Email address <span className="required">*</span>
+        </label>
+        <input 
+          type="email" 
+          className={`form-control ${emailError ? 'is-invalid' : ''}`} 
+          id="email" 
+          name="email" 
+          value={formData.email} 
+          onChange={handleChange} 
+          placeholder="name@example.com" 
+          required 
+        />
+        {emailError && <div className="invalid-feedback">{emailError}</div>}
+      </div>
 
-    <div className="mb-3">
-      <label htmlFor="name" className="form-label">Your Name</label>
-      <input 
-        type="text" 
-        className="form-control" 
-        id="name" 
-        name="name" 
-        value={formData.name} 
-        onChange={handleChange} 
-        placeholder="Your Name" 
-      />
-    </div>
+      <div className="form-group mb-3 name-field">
+        <label htmlFor="name" className="form-label">Your Name</label>
+        <input 
+          type="text" 
+          className="form-control" 
+          id="name" 
+          name="name" 
+          value={formData.name} 
+          onChange={handleChange} 
+          placeholder="Your Name" 
+        />
+      </div>
 
-    <div className="mb-3">
-      <label htmlFor="message" className="form-label">
-        Message <span style={{ color: 'red' }}>*</span>
-      </label>
-      <textarea 
-        className={`form-control ${messageError ? 'is-invalid' : ''}`} 
-        id="message" 
-        name="message" 
-        value={formData.message} 
-        onChange={handleChange} 
-        rows="4" 
-        placeholder="What is in your mind? Any suggestion/complaint/query" 
-        required 
-      />
-      {messageError && <div className="invalid-feedback">{messageError}</div>}
-    </div>
+      <div className="form-group mb-3 message-field">
+        <label htmlFor="message" className="form-label">
+          Message <span className="required">*</span>
+        </label>
+        <textarea 
+          className={`form-control ${messageError ? 'is-invalid' : ''}`} 
+          id="message" 
+          name="message" 
+          value={formData.message} 
+          onChange={handleChange} 
+          rows="4" 
+          placeholder="What is in your mind? Any suggestion/complaint/query" 
+          required 
+        />
+        {messageError && <div className="invalid-feedback">{messageError}</div>}
+      </div>
 
-    <button type="submit" className="btn btn-primary w-100">Submit</button>
-  </form>
-</div>
+      <button type="submit" className="btn btn-submit2 w-100">Submit</button>
+    </form>
+  </div>
+  </>
   );
   
 };
