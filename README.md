@@ -93,6 +93,10 @@ CLIENT_SECRET =
 REFRESH_TOKEN =
 USER_EMAIL =
 
+#socket-io
+SOCKET_SERVER_PORT=7000
+REACT_APP_SOCKET_SERVER_URL=http://localhost:7000 or any other available ports
+
 #nutrition api key
 NUTRITION_API_KEY =
 ```
