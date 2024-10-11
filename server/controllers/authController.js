@@ -1,4 +1,4 @@
-const User = require("../models/userSchema");
+const User = require('../models/userSchema');
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -100,7 +100,7 @@ exports.signup = async (req, res) => {
         !email ||
         !hostelName ||
         !password ||
-        !confirmPassword,
+        !confirmPassword ||
       !otp)
     ) {
       return res.status(403).json({
